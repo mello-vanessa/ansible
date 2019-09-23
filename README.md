@@ -4,6 +4,7 @@ This user should be the same username at local and remote host.
 
 1. To create a new user in remote host, with sudoers privileges and disable ssh root login on server and ssh password auth:
 Replace:
+at file "hosts" replace IP word to IP remote host
 $user to new user
 $password to new user´s password
 $userRemoteHost = user to connect to remote host
