@@ -1,0 +1,40 @@
+---
+- name: Install Nginx
+  become: true
+  yum:
+    name:
+    - nginx
+
+- name: Copy template nginx.conf to nginx directory
+  become: true
+  template:
+    src: ./templates/vhosts/nginx-conf.j2
+    dest: /etc/nginx/nginx.conf
+
+- name: Verify if certbot exists
+  stat: path="/opt/certbot"
+  register: certbotPath
+
+- name: Install certbot packages
+  become: true
+  yum:
+    name: "{{ packagesCertbot }}"
+  vars:
+    packagesCertbot:
+      - python-devel
+      - python-tools
+      - python-virtualenv
+      - python2-pip
+      - augeas-libs
+      - gcc
+      - libffi-devel
+      - openssl-devel
+      - redhat-rpm-config
+  when: certbotPath.stat.exists == False
+
+- name: Clone certbot repo
+  become: true
+  git:
+    repo: https://github.com/certbot/certbot.git
+    dest: /opt/certbot
+  when: certbotPath.stat.exists == False

@@ -1,0 +1,8 @@
+---
+- name: Restart ssh
+  become: true
+  systemd:
+     state: restarted
+     name: sshd
+     enabled: yes
+

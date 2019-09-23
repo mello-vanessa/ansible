@@ -1,0 +1,37 @@
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  {{ DOMAIN }};
+        root         /usr/share/nginx/html;
+
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+             return 301 https://$host$request_uri;
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+
+    server {
+
+        listen 443;
+        listen [::]:443;
+        server_name {{ DOMAIN }};
+        ssl on;
+        ssl_certificate /etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem;
+        ssl_trusted_certificate /etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+
+        location / {
+        }
+    }

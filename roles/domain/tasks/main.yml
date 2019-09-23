@@ -1,0 +1,58 @@
+---
+- name: Check if home domain dir exists
+  stat: 
+    path: /usr/share/nginx/html/{{ DOMAIN }}
+  register: checkDirDomain
+
+- debug:
+    msg: "Domain already exists in server, ending playbook..."
+  when: checkDirDomain.stat.exists == True  
+
+- name: End the play if home domain dir exists
+  meta: end_play
+  when: checkDirDomain.stat.exists == True
+
+- name: mkdir home directory domain
+  become: yes
+  file:
+    path: /usr/share/nginx/html/{{ DOMAIN }}
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  register: createHomeDir
+
+- name: Copy template index to home domain
+  become: true
+  template:
+    src: ./templates/index.j2
+    dest: /usr/share/nginx/html/{{ DOMAIN }}/index.html
+  when: createHomeDir.changed 
+
+- name: Create certificate SSL
+  become: true
+  shell: /opt/certbot/certbot-auto certonly --webroot -w /usr/share/nginx/html/{{ DOMAIN }} --preferred-challenges=http --email admin@{{ DOMAIN }} --server https://acme-v02.api.letsencrypt.org/directory --agree-tos -d {{ DOMAIN }}
+  register: createLetsEncrypt
+  ignore_errors: true
+  when: createHomeDir.changed
+
+- name: Copy template vhost without SSL to nginx directory
+  become: true
+  template:
+    src: ./templates/vhosts/domain-conf.j2
+    dest: /etc/nginx/conf.d/{{ DOMAIN }}.conf
+  when: createLetsEncrypt.rc == 1
+
+- name: Copy template vhost with SSL to nginx directory
+  become: true
+  template:
+    src: ./templates/vhosts/domain-ssl-conf.j2
+    dest: /etc/nginx/conf.d/{{ DOMAIN }}.conf
+  when: createLetsEncrypt.rc == 0 
+
+- name: Restart nginx
+  systemd: 
+    name: nginx
+    state: restarted
+  become: true
+  when: createHomeDir.changed

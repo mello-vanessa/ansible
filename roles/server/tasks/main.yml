@@ -1,0 +1,55 @@
+---
+- name: Alter hostname server
+  shell: "/usr/bin/hostnamectl set-hostname \"{{ HOSTNAME }}\""
+  become: yes  
+  when: ansible_nodename != "{{ HOSTNAME }}" 
+  register: nomeHost
+
+- name: Restart hostnamectl
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: systemd-hostnamed
+  become: yes
+  when: nomeHost.changed
+
+- name: Disable SElinux
+  become: yes
+  selinux:
+    state: disabled
+  when: ansible_selinux.config_mode != "disabled"
+
+- name: Remove firewalld
+  yum:
+    name: firewalld
+    state: absent
+  become: yes
+
+- name: Remove NetworkManager
+  yum:
+    name: NetworkManager
+    state: absent
+  become: yes
+
+- name: Install Development tools
+  yum:
+    name: "@Development tools"
+    state: present
+  become: yes
+
+- name: Install essencial packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - epel-release
+    - vim
+    - libevent
+    - libevent-devel
+    - net-tools
+    - whois
+    - gcc
+    - mlocate
+    - git
+    - bind-utils
+  become: yes
