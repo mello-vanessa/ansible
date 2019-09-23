@@ -2,7 +2,7 @@ You should create a ssh-key to your user before execute the playbook:
 ssh-keygen -t rsa -b 2048
 This user should be the same username at local and remote host.
 
-1. To create a new user in remote host, with sudoers privileges and disable ssh root login on server andssh password auth:
+1. To create a new user in remote host, with sudoers privileges and disable ssh root login on server and ssh password auth:
 Replace:
 $user to new user
 $password to new user´s password
