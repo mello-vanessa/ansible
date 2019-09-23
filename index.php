@@ -25,12 +25,12 @@ $arrayStories = $result["data"]["results"];
 $id = rand(0, (sizeof($arrayStories)-1));
 
 echo "<h1>Spider Man random story</h1>";
-echo "AttributionText: ".$result["attributionText"];
+echo "<b>AttributionText</b>: ".$result["attributionText"];
 echo "<br>";
 
 $description = $arrayStories[$id]["description"]."<br />";
 
-echo "Story description: ";
+echo "<b>Story description: </b>";
 if (strlen($description) == 6) {
         echo "There´s no description to this story.<br>";
 }
