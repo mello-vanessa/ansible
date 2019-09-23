@@ -1,3 +1,5 @@
+DevOps Test
+
 You should create a ssh-key to your user before execute the playbook: 
 ssh-keygen -t rsa -b 2048
 This user should be the same username at local and remote host.
@@ -20,3 +22,9 @@ $servername to new server name
 $domain to new domain
 
 ansible-playbook -i hosts production.yml --extra-vars "HOSTNAME=$serverName DOMAIN=$domain"
+
+************************************************************************************************
+
+Comic Test
+
+Just execute index.php file to test it.
