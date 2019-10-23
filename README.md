@@ -1,4 +1,4 @@
-DevOps Test
+DevOps 
 
 You should create a ssh-key to your user before execute the playbook: 
 ssh-keygen -t rsa -b 2048
@@ -25,6 +25,6 @@ ansible-playbook -i hosts production.yml --extra-vars "HOSTNAME=$serverName DOMA
 
 ************************************************************************************************
 
-Comic Test
+Comic API Marvel
 
 Just execute index.php file to test it.
